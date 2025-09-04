@@ -25,7 +25,7 @@ def flex_sink_attention(q, k, v, sink_size: int, window: int, *, scale=None, ena
         return (kv_idx < sink_size) & (kv_idx <= q_idx)
 
     # --- sliding-window mask: max(0, q - window + 1) <= kv <= q, but exclude sink region to avoid double count
-    # Thanks to Unsloth for figuring out the off by 1 bug (since gpt-oss window attention includes its current self)
+    # Thanks to Unsloth for figuring out the off by 1 bug (since gpt-oss window attention includes the current query)
     # https://unsloth.ai/blog/gpt-oss-context
     def win_mask(b, h, q_idx, kv_idx):
         left = torch.maximum(q_idx - (window - 1), torch.tensor(0, device=device, dtype=q_idx.dtype))
